@@ -290,7 +290,17 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => animateRow(e.upload.id), 100);
         })
         .listen('.upload.updated', (e) => {
+            // Get the previous status before updating
+            const previousUpload = uploads.find(u => u.id === e.upload.id);
+            const previousStatus = previousUpload?.status?.name;
+
+            // Update the upload
             updateUpload(e.upload);
             animateRow(e.upload.id);
+
+            // Show toast notification when status changes to completed
+            if (e.upload.status.name === 'completed' && previousStatus !== 'completed') {
+                showToast(`Upload #${e.upload.id} (${e.upload.document_name}) has been completed successfully!`, 'success');
+            }
         });
 });

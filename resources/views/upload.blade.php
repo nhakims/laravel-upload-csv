@@ -7,7 +7,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="min-h-screen" style="background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(https://images.unsplash.com/photo-1712492185560-4eb2212338aa?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D); background-size: cover;">
     <div class="container mx-auto px-4 py-8">
         <!-- Upload Form -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6 border border-gray-200">
