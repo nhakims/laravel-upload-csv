@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
-                        <span class="font-medium">${upload.current_line}/${upload.total_lines}</span>
+                        <span class="font-medium">${formatNumber(upload.current_line)}/${formatNumber(upload.total_lines)}</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
@@ -149,6 +149,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         };
         return colors[status] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Format number with thousand delimiters
+    function formatNumber(num) {
+        return num.toLocaleString('en-US');
     }
 
     // Format date to human-readable relative time
