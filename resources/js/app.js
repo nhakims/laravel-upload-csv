@@ -5,8 +5,65 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadsTable = document.getElementById('uploads-table');
     const uploadForm = document.getElementById('upload-form');
     const submitBtn = document.getElementById('submit-btn');
-    const uploadMessage = document.getElementById('upload-message');
     let uploads = [];
+
+    // Toast notification system
+    function showToast(message, type = 'success') {
+        // Create toast container if it doesn't exist
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'fixed top-4 left-1/2 -translate-x-1/2 z-50 space-y-2 flex flex-col items-center';
+            document.body.appendChild(toastContainer);
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-gray-900' : 'bg-red-900';
+        const borderColor = type === 'success' ? 'border-gray-700' : 'border-red-700';
+
+        toast.className = `${bgColor} ${borderColor} border-b-4 text-white px-6 py-4 rounded-lg shadow-xl transform -translate-y-full opacity-0 transition-all duration-300 ease-out min-w-96 max-w-md`;
+        toast.innerHTML = `
+            <div class="flex items-start">
+                <div class="flex-1">
+                    <p class="text-sm font-medium">${message}</p>
+                </div>
+                <button class="ml-4 text-white hover:text-gray-300 focus:outline-none">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        // Slide down animation
+        setTimeout(() => {
+            toast.classList.remove('-translate-y-full', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+        }, 10);
+
+        // Close button functionality
+        const closeBtn = toast.querySelector('button');
+        closeBtn.addEventListener('click', () => {
+            removeToast(toast);
+        });
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            removeToast(toast);
+        }, 5000);
+    }
+
+    function removeToast(toast) {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-full', 'opacity-0');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }
 
     // Handle form submission
     if (uploadForm) {
@@ -16,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(uploadForm);
             submitBtn.disabled = true;
             submitBtn.textContent = 'Uploading...';
-            uploadMessage.classList.add('hidden');
 
             try {
                 const response = await axios.post('/upload', formData, {
@@ -25,25 +81,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                uploadMessage.className = 'mt-4 p-4 bg-gray-100 border-l-4 border-black rounded transition-opacity duration-1000 opacity-100';
-                uploadMessage.innerHTML = `
-                    <p class="text-sm text-gray-900">
-                        <span class="font-medium">Success!</span> ${response.data.message}
-                    </p>
-                `;
-                uploadMessage.classList.remove('hidden');
-
-                // Fade out success message after 5 seconds
-                setTimeout(() => {
-                    uploadMessage.classList.remove('opacity-100');
-                    uploadMessage.classList.add('opacity-0');
-                    // Hide after fade completes
-                    setTimeout(() => {
-                        uploadMessage.classList.add('hidden');
-                        uploadMessage.classList.remove('opacity-0');
-                        uploadMessage.classList.add('opacity-100');
-                    }, 1000);
-                }, 5000);
+                // Show success toast
+                showToast(response.data.message, 'success');
 
                 uploadForm.reset();
 
@@ -56,13 +95,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (error) {
                 console.error('Upload error:', error);
                 const errorMsg = error.response?.data?.message || 'An error occurred during upload';
-                uploadMessage.className = 'mt-4 p-4 bg-gray-200 border-l-4 border-gray-900 rounded';
-                uploadMessage.innerHTML = `
-                    <p class="text-sm text-gray-900">
-                        <span class="font-medium">Error!</span> ${errorMsg}
-                    </p>
-                `;
-                uploadMessage.classList.remove('hidden');
+
+                // Show error toast
+                showToast(errorMsg, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Upload Document';
@@ -80,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error fetching uploads:', error);
             uploadsTable.innerHTML = `
                 <tr>
-                    <td colspan="6" class="px-6 py-4 text-center text-gray-900">
+                    <td colspan="7" class="px-6 py-4 text-center text-gray-900">
                         Error loading uploads. Please refresh the page.
                     </td>
                 </tr>
@@ -93,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (uploads.length === 0) {
             uploadsTable.innerHTML = `
                 <tr>
-                    <td colspan="6" class="px-6 py-4 text-center text-gray-600">
+                    <td colspan="7" class="px-6 py-4 text-center text-gray-600">
                         No uploads found.
                     </td>
                 </tr>
@@ -108,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const statusColor = getStatusColor(upload.status.name);
             const relativeTime = formatRelativeTime(upload.created_at);
             const fullDate = new Date(upload.created_at).toLocaleString();
+            const executionTime = formatExecutionTime(upload.created_at, upload.updated_at);
 
             return `
                 <tr class="hover:bg-gray-50 transition-colors duration-150" data-upload-id="${upload.id}">
@@ -129,6 +165,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
                             ${upload.status.name}
                         </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
+                        <span class="font-medium">${executionTime}</span>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-500">
                         <div class="font-medium text-gray-700">${relativeTime}</div>
@@ -154,6 +193,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // Format number with thousand delimiters
     function formatNumber(num) {
         return num.toLocaleString('en-US');
+    }
+
+    // Format execution time (duration between created_at and updated_at)
+    function formatExecutionTime(createdAt, updatedAt) {
+        const created = new Date(createdAt);
+        const updated = new Date(updatedAt);
+        const diffMs = updated - created;
+        const diffSeconds = Math.floor(diffMs / 1000);
+
+        if (diffSeconds < 1) return '< 1s';
+        if (diffSeconds < 60) return `${diffSeconds}s`;
+
+        const minutes = Math.floor(diffSeconds / 60);
+        const remainingSeconds = diffSeconds % 60;
+
+        if (minutes < 60) {
+            return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`;
+        }
+
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+
+        if (hours < 24) {
+            return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+        }
+
+        const days = Math.floor(hours / 24);
+        const remainingHours = hours % 24;
+
+        return remainingHours > 0 ? `${days}d ${remainingHours}h` : `${days}d`;
     }
 
     // Format date to human-readable relative time
@@ -217,12 +286,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Listen for WebSocket events
     window.Echo.channel('uploads')
         .listen('.upload.created', (e) => {
-            console.log('Upload created:', e.upload);
             updateUpload(e.upload);
             setTimeout(() => animateRow(e.upload.id), 100);
         })
         .listen('.upload.updated', (e) => {
-            console.log('Upload updated:', e.upload);
             updateUpload(e.upload);
             animateRow(e.upload.id);
         });

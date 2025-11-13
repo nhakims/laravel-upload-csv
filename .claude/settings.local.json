@@ -10,7 +10,8 @@
       "Bash(docker-compose up:*)",
       "Bash(docker-compose ps:*)",
       "Bash(docker-compose logs:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(docker-compose restart:*)"
     ],
     "deny": [],
     "ask": []
