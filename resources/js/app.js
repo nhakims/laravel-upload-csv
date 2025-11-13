@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="bg-gray-900 h-2.5 rounded-full transition-all duration-300" style="width: ${percentage}%"></div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         <span class="font-medium">${formatNumber(upload.current_line)}/${formatNumber(upload.total_lines)}</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">

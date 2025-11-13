@@ -39,12 +39,12 @@
                 <table class="min-w-full divide-y divide-gray-300">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">ID</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Document</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Progress Bar</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Lines</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Document</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Progress</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Lines</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Date</th>
                         </tr>
                     </thead>
                     <tbody id="uploads-table" class="bg-white divide-y divide-gray-200">

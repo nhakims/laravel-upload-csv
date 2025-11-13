@@ -58,13 +58,17 @@ if [ ! -d /var/www/html/database ]; then
     mkdir -p /var/www/html/database
 fi
 
-# Create empty SQLite database if it doesn't exist
-if [ ! -f /var/www/html/database/database.sqlite ]; then
-    echo "Creating empty SQLite database..."
-    touch /var/www/html/database/database.sqlite
-    chown www-data:www-data /var/www/html/database/database.sqlite
-    chmod 664 /var/www/html/database/database.sqlite
+# Delete the SQLite database file if it exists
+if [ -f /var/www/html/database/database.sqlite ]; then
+    echo "Existing SQLite database found. Deleting..."
+    rm /var/www/html/database/database.sqlite
 fi
+
+# Create empty SQLite database
+touch /var/www/html/database/database.sqlite
+chown www-data:www-data /var/www/html/database/database.sqlite
+chmod 664 /var/www/html/database/database.sqlite
+
 
 # Run database migrations
 echo "Running database migrations..."

@@ -1,14 +1,13 @@
 services:
   app:
     build:
-      context: .
+      context: ./docker/php
       dockerfile: Dockerfile
     container_name: laravel-app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
-      - app-data:/var/www/html
-      - storage-data:/var/www/html/storage
+      - app:/var/www/html
     networks:
       - laravel
     depends_on:
@@ -24,8 +23,7 @@ services:
       - "8000:80"
       - "8080:8080"
     volumes:
-      - app-data:/var/www/html
-      - storage-data:/var/www/html/storage
+      - app:/var/www/html
     networks:
       - laravel
     depends_on:
@@ -40,16 +38,14 @@ services:
     networks:
       - laravel
     volumes:
-      - redis-data:/data
+      - data:/var/www/data
 
 networks:
   laravel:
     driver: bridge
 
 volumes:
-  redis-data:
+  app:
     driver: local
-  app-data:
-    driver: local
-  storage-data:
+  data:
     driver: local
