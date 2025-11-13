@@ -39,6 +39,9 @@ COPY . /var/www/html
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Create .env file for build time (needed for Vite to compile with env vars)
+RUN cp .env.example .env
+
 # Install Node dependencies and build assets
 RUN npm install && npm run build
 
@@ -56,7 +59,11 @@ COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Copy PHP configuration
 COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
+# Copy entrypoint script
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Expose ports
 EXPOSE 9000 8080
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
